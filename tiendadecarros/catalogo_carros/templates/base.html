@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Carros</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Impact', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://www.autolist.com/assets/listings/heroes/used-cars-hero.jpg') center/cover no-repeat;
+            color: white;
+        }
+
+        /* Barra de título */
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 3.5em;
+            text-transform: uppercase;
+            text-shadow: 3px 3px 8px rgba(255, 0, 0, 0.8), -3px -3px 8px rgba(0, 0, 255, 0.8);
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Enlaces de navegación */
+        .nav-links {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Menú desplegable */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Contenido principal */
+        .content {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            margin: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de título -->
+    <div class="header">
+        <h1>Tienda de Carros</h1>
+        <!-- Enlaces de navegación -->
+        <div class="nav-links">
+            <a href="{% url 'index' %}">Inicio</a>
+            <div class="dropdown">
+                <a href="#" class="dropbtn">Categorías</a>
+                <div class="dropdown-content">
+                    <a href="{% url 'catalogo_carros' %}">Carros</a>
+                    <a href="{% url 'catalogo_repuestos' %}">Repuestos</a>
+                </div>
+            </div>
+            <a href="{% url 'añadir_producto' %}">Añadir Producto</a>
+            <a href="{% url 'clientes' %}">Clientes</a>
+            <a href="{% url 'compras' %}">Compras</a>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="content">
+        {% block content %}
+        <!-- El contenido específico de cada página se insertará aquí -->
+        {% endblock %}
+    </div>
+</body>
+</html>

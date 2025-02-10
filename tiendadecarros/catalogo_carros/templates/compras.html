@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Compras</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Total</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for compra in compras %}
+        <tr>
+            <td>{{ compra.fecha }}</td>
+            <td>{{ compra.cliente.nombre }}</td>
+            <td>${{ compra.total }}</td>
+            <td><a href="{% url 'detalle_compra' compra.id %}">Ver Detalles</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'nueva_compra' %}">Agregar Compra</a>
+{% endblock %}

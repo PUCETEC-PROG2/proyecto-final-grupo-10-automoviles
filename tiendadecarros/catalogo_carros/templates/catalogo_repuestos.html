@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Catálogo de Repuestos</h1>
+<div class="productos">
+    {% for repuesto in repuestos %}
+    <div class="producto">
+        <img src="{{ repuesto.imagen.url }}" alt="{{ repuesto.nombre }}">
+        <h2>{{ repuesto.nombre }}</h2>
+        <p>{{ repuesto.descripcion }}</p>
+        <p>Precio: ${{ repuesto.precio }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
