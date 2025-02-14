@@ -43,13 +43,15 @@ def añadir_producto(request):
     return render(request, 'añadir_producto.html', {'form': form})
 
 def catalogo_carros(request):
-    categoria_carros = get_object_or_404(Categoria, nombre="carros")
-    carros = categoria_carros.productos.all()
+    # Obtén o crea la categoría "Carros" si no existe
+    categoria_carros, created = Categoria.objects.get_or_create(nombre="Carros")
+    # Filtra los productos por categoría
+    carros = Producto.objects.filter(categoria=categoria_carros)
     return render(request, 'catalogo_carros.html', {'carros': carros})
 
 def catalogo_repuestos(request):
-    categoria_repuestos = get_object_or_404(Categoria, nombre="Repuestos")
-    repuestos = categoria_repuestos.productos.all()
+    categoria_repuestos, created = Categoria.objects.get_or_create(nombre="Repuestos")
+    repuestos = Producto.objects.filter(categoria=categoria_repuestos)
     return render(request, 'catalogo_repuestos.html', {'repuestos': repuestos})
 
 def nuevo_cliente(request):

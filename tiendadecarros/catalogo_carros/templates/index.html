@@ -1,15 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Productos Destacados</h1>
-<div class="productos">
-    {% for producto in productos_destacados %}
-    <div class="producto">
-        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-        <h2>{{ producto.nombre }}</h2>
-        <p>{{ producto.descripcion }}</p>
-        <p>Precio: ${{ producto.precio }}</p>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Productos Destacados</h1>
+    <div class="row">
+        {% for producto in productos_destacados %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <p class="card-text">{{ producto.descripcion|truncatechars:100 }}</p>
+                    <p class="fw-bold">Precio: ${{ producto.precio }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p>No hay productos destacados disponibles.</p>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endblock %}
