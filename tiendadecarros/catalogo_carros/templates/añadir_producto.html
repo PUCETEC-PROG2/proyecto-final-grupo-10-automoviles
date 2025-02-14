@@ -1,12 +1,124 @@
-<!-- añadir_producto.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Añadir Producto</h1>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn">Guardar Producto</button>
-</form>
-<a href="{% url 'index' %}" class="btn">Cancelar</a>
+<div class="container">
+    <h1>Añadir Producto</h1>
+    
+    <form method="post" enctype="multipart/form-data" class="form-container">
+        {% csrf_token %}
+
+        <div class="form-group">
+            {{ form.as_table }}
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary">Guardar Producto</button>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    /* Contenedor principal */
+    .container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    /* Estilo del encabezado */
+    h1 {
+        text-align: center;
+        color: white;
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+
+    /* Formulario */
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Alineación de campos */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table tr {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    table th {
+        text-align: left;
+        font-weight: bold;
+        color: white;
+        width: 30%;
+    }
+
+    table td {
+        width: 70%;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 5px;
+        background: transparent;
+        color: white;
+        font-size: 1em;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        border-color: white;
+        outline: none;
+    }
+
+    /* Botones */
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        font-size: 1em;
+    }
+
+    .btn-primary {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #218838;
+    }
+
+    .btn-secondary {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #c82333;
+    }
+</style>
 {% endblock %}
