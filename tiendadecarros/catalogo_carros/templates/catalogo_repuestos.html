@@ -9,6 +9,7 @@
         <h2>{{ repuesto.nombre }}</h2>
         <p>{{ repuesto.descripcion }}</p>
         <p>Precio: ${{ repuesto.precio }}</p>
+        <a href="{% url 'añadir_producto' repuesto.id %}" class="btn btn-success">Añadir al carrito</a>
     </div>
     {% endfor %}
 </div>

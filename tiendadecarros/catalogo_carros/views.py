@@ -31,16 +31,31 @@ def detalle_compra(request, compra_id):
     return render(request, 'detalle_compra.html', {'compra': compra, 'detalles': detalles})
 
 @login_required
-def añadir_producto(request):
-    if request.method == 'POST':
-        form = ProductoForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "¡Producto añadido correctamente!")
-            return redirect('index')
+def añadir_producto(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    compra_id = request.session.get('compra_id')
+    
+    if not compra_id:
+        # Crear una nueva compra si no existe
+        compra = Compra.objects.create(cliente=None)  # Ajustar cliente si es necesario
+        request.session['compra_id'] = compra.id
     else:
-        form = ProductoForm()
-    return render(request, 'añadir_producto.html', {'form': form})
+        # Obtener la compra existente
+        compra = Compra.objects.get(id=compra_id, estado='pendiente')
+
+    # Verificar si el producto ya está en el carrito
+    detalle, creado = DetalleCompra.objects.get_or_create(
+        compra=compra,
+        producto=producto,
+        defaults={'cantidad': 1, 'precio_unitario': producto.precio}
+    )
+    if not creado:
+        # Si ya existe, incrementar la cantidad
+        detalle.cantidad += 1
+        detalle.save()
+
+    return redirect('compras')  # Redirige a la vista del carrito
+
 
 def catalogo_carros(request):
     # Obtén o crea la categoría "Carros" si no existe
@@ -84,3 +99,89 @@ def eliminar_cliente(request, cliente_id):
         return redirect('clientes')  # Redirige a la lista de clientes después de eliminar
 
     return render(request, 'eliminar_cliente.html', {'cliente': cliente})
+
+
+@login_required
+def añadir_producto(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    compra_id = request.session.get('compra_id')
+    compra = Compra.objects.filter(id=compra_id, estado='pendiente').first()
+
+    if not compra:
+        cliente = Cliente.objects.first()  # Ajustar lógica para cliente real
+        if not cliente:
+            messages.error(request, "No hay clientes disponibles para asignar la compra.")
+            return redirect('index')
+        compra = Compra.objects.create(cliente=cliente)
+        request.session['compra_id'] = compra.id
+
+    detalle, created = DetalleCompra.objects.get_or_create(
+        compra=compra, producto=producto,
+        defaults={'cantidad': 1, 'precio_unitario': producto.precio}
+    )
+    if not created:
+        detalle.cantidad += 1
+        detalle.save()
+
+    messages.success(request, f"Producto '{producto.nombre}' añadido a la compra.")
+    return redirect('ver_compras')
+
+def ver_compras(request):
+    compra_id = request.session.get('compra_id')
+    compra = Compra.objects.filter(id=compra_id, estado='pendiente').first()
+
+    # Calcular el total de la compra
+    total = 0
+    if compra:
+        total = sum(detalle.cantidad * detalle.precio_unitario for detalle in compra.detallecompra_set.all())
+
+    return render(request, 'compras.html', {'compra': compra, 'total': total})
+
+
+@login_required
+def finalizar_compra(request):
+    compra_id = request.session.get('compra_id')
+    compra = Compra.objects.filter(id=compra_id, estado='pendiente').first()
+    
+    if compra:
+        compra.estado = 'finalizada'
+        compra.total = sum(item.cantidad * item.precio_unitario for item in compra.detallecompra_set.all())
+        compra.save()
+        del request.session['compra_id']  # Eliminar compra de sesión
+
+    return redirect('ver_compras')
+
+
+def agregar_producto_form(request):
+    return render(request, 'agregar_producto.html')
+
+def nuevo_producto(request):
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('index')  # O la página que prefieras
+    else:
+        form = ProductoForm()
+    return render(request, 'nuevo_producto.html', {'form': form})
+
+def ver_compras(request):
+    compra_id = request.session.get('compra_id')
+    compra = Compra.objects.filter(id=compra_id, estado='pendiente').first()
+
+    return render(request, 'compras.html', {'compra': compra})
+
+@login_required
+def eliminar_producto_carrito(request, detalle_id):
+    detalle = get_object_or_404(DetalleCompra, id=detalle_id)
+    compra = detalle.compra
+
+    if compra.estado == 'pendiente':
+        detalle.delete()
+
+        # Si la compra ya no tiene detalles, eliminarla
+        if not compra.detallecompra_set.exists():
+            compra.delete()
+            del request.session['compra_id']
+
+    return redirect('ver_compras')

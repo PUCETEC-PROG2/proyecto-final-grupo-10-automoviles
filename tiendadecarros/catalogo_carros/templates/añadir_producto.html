@@ -4,7 +4,7 @@
 <div class="container">
     <h1>Añadir Producto</h1>
     
-    <form method="post" enctype="multipart/form-data" class="form-container">
+    <form action="{% url 'añadir_producto' producto.id %}" method="post" enctype="multipart/form-data" class="form-container">
         {% csrf_token %}
 
         <div class="form-group">

@@ -109,16 +109,14 @@
                     <a href="{% url 'catalogo_repuestos' %}">Repuestos</a>
                 </div>
             </div>
-            <a href="{% url 'agregar_producto' %}">Añadir Producto</a>
+            <a href="{% url 'nuevo_producto' %}">Añadir Producto</a>
             <a href="{% url 'clientes' %}">Clientes</a>
             <a href="{% url 'compras' %}">Compras</a>
         </div>
     </div>
 
-    <!-- Contenido principal -->
     <div class="content">
         {% block content %}
-        <!-- El contenido específico de cada página se insertará aquí -->
         {% endblock %}
     </div>
 </body>
