@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Detalles de la Compra</h1>
+<h1>Detalles de la Compra #{{ compra.id }}</h1>
 <p>Cliente: {{ compra.cliente.nombre }}</p>
 <p>Fecha: {{ compra.fecha }}</p>
 <p>Total: ${{ compra.total }}</p>
+
 <h2>Productos</h2>
 <table>
     <thead>
@@ -16,12 +17,12 @@
         </tr>
     </thead>
     <tbody>
-        {% for detalle in detalles %}
+        {% for item in detalles_con_subtotal %}
         <tr>
-            <td>{{ detalle.producto.nombre }}</td>
-            <td>{{ detalle.cantidad }}</td>
-            <td>${{ detalle.precio_unitario }}</td>
-            <td>${{ detalle.cantidad|multiply:detalle.precio_unitario }}</td>
+            <td>{{ item.detalle.producto.nombre }}</td>
+            <td>{{ item.detalle.cantidad }}</td>
+            <td>${{ item.detalle.precio_unitario }}</td>
+            <td>${{ item.subtotal }}</td>
         </tr>
         {% endfor %}
     </tbody>

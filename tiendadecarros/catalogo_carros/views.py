@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Producto, Categoria, Cliente, Compra, DetalleCompra
 from .forms import ProductoForm, ClienteForm, CompraForm, DetalleCompraForm
+from django.utils import timezone 
+
 
 def index(request):
     productos_destacados = Producto.objects.filter(destacado=True)
@@ -28,20 +30,40 @@ def compras(request):
 def detalle_compra(request, compra_id):
     compra = get_object_or_404(Compra.objects.prefetch_related('detalles__producto'), id=compra_id)
     detalles = compra.detalles.all()
-    return render(request, 'detalle_compra.html', {'compra': compra, 'detalles': detalles})
+
+    # Calcular el subtotal para cada detalle
+    detalles_con_subtotal = []
+    for detalle in detalles:
+        subtotal = detalle.cantidad * detalle.precio_unitario
+        detalles_con_subtotal.append({
+            'detalle': detalle,
+            'subtotal': subtotal
+        })
+
+    return render(request, 'detalle_compra.html', {
+        'compra': compra,
+        'detalles_con_subtotal': detalles_con_subtotal
+    })
 
 @login_required
 def añadir_producto(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     compra_id = request.session.get('compra_id')
-    
-    if not compra_id:
-        # Crear una nueva compra si no existe
-        compra = Compra.objects.create(cliente=None)  # Ajustar cliente si es necesario
-        request.session['compra_id'] = compra.id
-    else:
-        # Obtener la compra existente
-        compra = Compra.objects.get(id=compra_id, estado='pendiente')
+    compra = Compra.objects.filter(id=compra_id, estado='pendiente').first()
+
+    if not compra:
+        # Asignar un cliente a la compra (puedes modificar esta lógica según tus necesidades)
+        cliente = Cliente.objects.first()  # O cualquier lógica para asignar un cliente
+        if not cliente:
+            messages.error(request, "No hay clientes disponibles para asignar la compra.")
+            return redirect('index')
+
+        # Crear una nueva compra con la fecha actual
+        compra = Compra.objects.create(
+            cliente=cliente,
+            fecha=timezone.now().date()  # Establece la fecha actual
+        )
+        request.session['compra_id'] = compra.id  # Guardar el ID de la compra en la sesión
 
     # Verificar si el producto ya está en el carrito
     detalle, creado = DetalleCompra.objects.get_or_create(
@@ -54,8 +76,8 @@ def añadir_producto(request, producto_id):
         detalle.cantidad += 1
         detalle.save()
 
-    return redirect('compras')  # Redirige a la vista del carrito
-
+    messages.success(request, f"Producto '{producto.nombre}' añadido al carrito.")
+    return redirect('ver_compras')  # Redirige a la vista del carrito
 
 def catalogo_carros(request):
     # Obtén o crea la categoría "Carros" si no existe
@@ -101,42 +123,6 @@ def eliminar_cliente(request, cliente_id):
     return render(request, 'eliminar_cliente.html', {'cliente': cliente})
 
 
-@login_required
-def añadir_producto(request, producto_id):
-    producto = get_object_or_404(Producto, id=producto_id)
-    compra_id = request.session.get('compra_id')
-    compra = Compra.objects.filter(id=compra_id, estado='pendiente').first()
-
-    if not compra:
-        cliente = Cliente.objects.first()  # Ajustar lógica para cliente real
-        if not cliente:
-            messages.error(request, "No hay clientes disponibles para asignar la compra.")
-            return redirect('index')
-        compra = Compra.objects.create(cliente=cliente)
-        request.session['compra_id'] = compra.id
-
-    detalle, created = DetalleCompra.objects.get_or_create(
-        compra=compra, producto=producto,
-        defaults={'cantidad': 1, 'precio_unitario': producto.precio}
-    )
-    if not created:
-        detalle.cantidad += 1
-        detalle.save()
-
-    messages.success(request, f"Producto '{producto.nombre}' añadido a la compra.")
-    return redirect('ver_compras')
-
-def ver_compras(request):
-    compra_id = request.session.get('compra_id')
-    compra = Compra.objects.filter(id=compra_id, estado='pendiente').first()
-
-    # Calcular el total de la compra
-    total = 0
-    if compra:
-        total = sum(detalle.cantidad * detalle.precio_unitario for detalle in compra.detallecompra_set.all())
-
-    return render(request, 'compras.html', {'compra': compra, 'total': total})
-
 
 @login_required
 def finalizar_compra(request):
@@ -145,12 +131,12 @@ def finalizar_compra(request):
     
     if compra:
         compra.estado = 'finalizada'
+        compra.fecha_finalizacion = timezone.now()  # Establecer la fecha de finalización
         compra.total = sum(item.cantidad * item.precio_unitario for item in compra.detallecompra_set.all())
         compra.save()
         del request.session['compra_id']  # Eliminar compra de sesión
 
     return redirect('ver_compras')
-
 
 def agregar_producto_form(request):
     return render(request, 'agregar_producto.html')
@@ -169,7 +155,26 @@ def ver_compras(request):
     compra_id = request.session.get('compra_id')
     compra = Compra.objects.filter(id=compra_id, estado='pendiente').first()
 
-    return render(request, 'compras.html', {'compra': compra})
+    # Calcular el total y el subtotal de cada detalle
+    total = 0
+    detalles_con_subtotal = []
+    if compra:
+        detalles = compra.detallecompra_set.all()
+        for detalle in detalles:
+            subtotal = detalle.cantidad * detalle.precio_unitario
+            detalles_con_subtotal.append({
+                'detalle': detalle,
+                'subtotal': subtotal
+            })
+            total += subtotal
+    else:
+        detalles = []
+
+    return render(request, 'compras.html', {
+        'compra': compra,
+        'detalles_con_subtotal': detalles_con_subtotal,
+        'total': total
+    })
 
 @login_required
 def eliminar_producto_carrito(request, detalle_id):
@@ -185,3 +190,11 @@ def eliminar_producto_carrito(request, detalle_id):
             del request.session['compra_id']
 
     return redirect('ver_compras')
+
+
+@login_required
+def historial_compras(request):
+    # Obtener todas las compras finalizadas del cliente actual (o de todos los clientes)
+    compras_finalizadas = Compra.objects.filter(estado='finalizada').order_by('-fecha_finalizacion')
+    
+    return render(request, 'historial_compras.html', {'compras_finalizadas': compras_finalizadas})

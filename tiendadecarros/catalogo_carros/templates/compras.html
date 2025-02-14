@@ -1,21 +1,25 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h2>Carrito de Compras</h2>
+<h1>Carrito de Compras</h1>
 {% if compra %}
     <ul>
-        {% for detalle in compra.detallecompra_set.all %}
-            <li>
-                <strong>{{ detalle.producto.nombre }}</strong><br>
-                Cantidad: {{ detalle.cantidad }}<br>
-                Precio Unitario: ${{ detalle.precio_unitario }}<br>
-                Subtotal: ${{ detalle.cantidad|floatformat:2|add:detalle.precio_unitario }}
-                <a href="{% url 'eliminar_producto_carrito' detalle.id %}">Eliminar</a>
-            </li>
-        {% endfor %}
+    {% for item in detalles_con_subtotal %}
+        <li>
+            {{ item.detalle.producto.nombre }} - 
+            Cantidad: {{ item.detalle.cantidad }} - 
+            Precio Unitario: ${{ item.detalle.precio_unitario }} - 
+            Subtotal: ${{ item.subtotal }}
+            <!-- Botón para eliminar el producto -->
+            <a href="{% url 'eliminar_producto_carrito' item.detalle.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
+                Eliminar
+            </a>
+        </li>
+    {% endfor %}
     </ul>
     <p>Total: ${{ total }}</p>
     <a href="{% url 'finalizar_compra' %}" class="btn btn-primary">Finalizar Compra</a>
 {% else %}
-    <p>No hay productos en tu carrito.</p>
+    <p>No hay productos en el carrito.</p>
 {% endif %}
 {% endblock %}
