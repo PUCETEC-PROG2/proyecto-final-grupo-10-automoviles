@@ -131,8 +131,8 @@ def finalizar_compra(request):
     
     if compra:
         compra.estado = 'finalizada'
-        compra.fecha_finalizacion = timezone.now()  # Establecer la fecha de finalización
-        compra.total = sum(item.cantidad * item.precio_unitario for item in compra.detallecompra_set.all())
+        compra.fecha_finalizacion = timezone.now()
+        compra.total = sum(item.cantidad * item.precio_unitario for item in compra.detalles.all())  # Usa el related_name definido
         compra.save()
         del request.session['compra_id']  # Eliminar compra de sesión
 
@@ -159,7 +159,7 @@ def ver_compras(request):
     total = 0
     detalles_con_subtotal = []
     if compra:
-        detalles = compra.detallecompra_set.all()
+        detalles = compra.detalles.all()  # Usa el related_name definido (o detallecompra_set si no has definido related_name)
         for detalle in detalles:
             subtotal = detalle.cantidad * detalle.precio_unitario
             detalles_con_subtotal.append({
@@ -175,7 +175,7 @@ def ver_compras(request):
         'detalles_con_subtotal': detalles_con_subtotal,
         'total': total
     })
-
+    
 @login_required
 def eliminar_producto_carrito(request, detalle_id):
     detalle = get_object_or_404(DetalleCompra, id=detalle_id)
@@ -183,9 +183,10 @@ def eliminar_producto_carrito(request, detalle_id):
 
     if compra.estado == 'pendiente':
         detalle.delete()
+        messages.success(request, "Producto eliminado del carrito.")
 
         # Si la compra ya no tiene detalles, eliminarla
-        if not compra.detallecompra_set.exists():
+        if not compra.detalles.exists():  # Usa el related_name definido
             compra.delete()
             del request.session['compra_id']
 

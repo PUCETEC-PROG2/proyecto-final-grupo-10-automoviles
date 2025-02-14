@@ -3,21 +3,34 @@
 {% block content %}
 <h1>Carrito de Compras</h1>
 {% if compra %}
-    <ul>
-    {% for item in detalles_con_subtotal %}
-        <li>
-            {{ item.detalle.producto.nombre }} - 
-            Cantidad: {{ item.detalle.cantidad }} - 
-            Precio Unitario: ${{ item.detalle.precio_unitario }} - 
-            Subtotal: ${{ item.subtotal }}
-            <!-- Botón para eliminar el producto -->
-            <a href="{% url 'eliminar_producto_carrito' item.detalle.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
-                Eliminar
-            </a>
-        </li>
-    {% endfor %}
-    </ul>
-    <p>Total: ${{ total }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+                <th>Acciones</th> <!-- Columna adicional para el botón de eliminar -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in detalles_con_subtotal %}
+            <tr>
+                <td>{{ item.detalle.producto.nombre }}</td>
+                <td>{{ item.detalle.cantidad }}</td>
+                <td>${{ item.detalle.precio_unitario }}</td>
+                <td>${{ item.subtotal }}</td>
+                <td>
+                    <!-- Botón para eliminar el producto -->
+                    <a href="{% url 'eliminar_producto_carrito' item.detalle.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><strong>Total: ${{ total }}</strong></p>
     <a href="{% url 'finalizar_compra' %}" class="btn btn-primary">Finalizar Compra</a>
 {% else %}
     <p>No hay productos en el carrito.</p>
