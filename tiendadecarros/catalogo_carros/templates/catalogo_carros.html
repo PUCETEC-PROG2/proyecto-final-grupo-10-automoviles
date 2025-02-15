@@ -1,17 +1,62 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Catálogo de Carros</h1>
-<div class="productos">
-    {% for carro in carros %}
-    <div class="producto">
-        <img src="{{ carro.imagen.url }}" alt="{{ carro.nombre }}">
-        <h2>{{ carro.nombre }}</h2>
-        <p>{{ carro.descripcion }}</p>
-        <p>Precio: ${{ carro.precio }}</p>
-        <p>ID del producto: {{ carro.id }}</p>
-        <a href="{% url 'añadir_producto' carro.id %}" class="btn btn-success">Añadir al carrito</a>
+<h1 class="text-center my-4">🚗 Catálogo de Carros</h1>
+
+<div class="container">
+    <div class="row justify-content-center">
+        {% for carro in carros %}
+        <div class="col-md-4 mb-3"> 
+            <div class="card h-100 shadow-lg text-center">
+                <div class="image-container">
+                    <img src="{{ carro.imagen.url }}" alt="{{ carro.nombre }}" class="car-img">
+                </div>
+                <div class="card-body p-2 d-flex flex-column align-items-center"> 
+                    <h5 class="card-title mt-2 mb-1 text-center">{{ carro.nombre }}</h5> 
+                    <p class="card-text text-center mb-1">{{ carro.descripcion }}</p> 
+                    <p class="fw-bold text-success mb-2 text-center">💲{{ carro.precio }}</p>
+                    <a href="{% url 'añadir_producto' carro.id %}" class="btn btn-success w-75 py-1">🛒 Añadir</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
+
+<style>
+    .image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+        overflow: hidden;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+    }
+
+    .car-img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+
+    .card-body {
+        text-align: center; /* Centrar todo el contenido */
+    }
+
+    .card {
+        border-radius: 8px;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+        transform: scale(1.03);
+    }
+
+    .btn-success {
+        font-size: 1rem;
+        padding: 8px 0;
+    }
+</style>
+
 {% endblock %}

@@ -1,124 +1,112 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h1>Añadir Producto</h1>
-    
-    <form action="{% url 'añadir_producto' producto.id %}" method="post" enctype="multipart/form-data" class="form-container">
-        {% csrf_token %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary fw-bold">Añadir Producto</h2>
 
-        <div class="form-group">
-            {{ form.as_table }}
-        </div>
+    <div class="card shadow-lg mx-auto border-0" style="max-width: 500px; border-radius: 12px;">
+        <div class="card-body p-4">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
 
-        <div class="button-group">
-            <button type="submit" class="btn btn-primary">Guardar Producto</button>
-            <a href="{% url 'index' %}" class="btn btn-secondary">Cancelar</a>
+                <div class="mb-3">
+                    <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold">Nombre del Producto</label>
+                    {{ form.nombre }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-semibold">Descripción</label>
+                    {{ form.descripcion }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.precio.id_for_label }}" class="form-label fw-semibold">Precio</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-success text-white fw-bold">$</span>
+                        {{ form.precio }}
+                    </div>
+                </div>
+
+                <div class="mb-3 text-center">
+                    <label for="{{ form.imagen.id_for_label }}" class="form-label fw-semibold">Imagen del Producto</label>
+                    <div class="border p-3 rounded bg-light">
+                        {% if form.instance.imagen %}
+                            <img src="{{ form.instance.imagen.url }}" alt="Imagen actual" class="img-thumbnail mb-3 shadow-sm" style="max-width: 200px;">
+                        {% else %}
+                            <p class="text-muted">No hay imagen disponible</p>
+                        {% endif %}
+                    </div>
+                    {{ form.imagen }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.destacado.id_for_label }}" class="form-label fw-semibold">¿Producto Destacado?</label>
+                    <div class="form-check">
+                        {{ form.destacado }}
+                        <label class="form-check-label" for="{{ form.destacado.id_for_label }}">Sí</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.categoria.id_for_label }}" class="form-label fw-semibold">Categoría</label>
+                    {{ form.categoria }}
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success px-4 py-2 fw-bold shadow-sm">Guardar Producto</button>
+                    <a href="{% url 'index' %}" class="btn btn-secondary px-4 py-2 fw-bold shadow-sm">Cancelar</a>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 
 <style>
-    /* Contenedor principal */
-    .container {
-        max-width: 600px;
-        margin: 40px auto;
-        padding: 20px;
+    /* Fondo general */
+    body {
+        background-color: #f8f9fa;
     }
 
-    /* Estilo del encabezado */
-    h1 {
-        text-align: center;
-        color: white;
-        font-size: 2em;
-        margin-bottom: 20px;
+    /* Tarjeta del formulario */
+    .card {
+        transition: 0.3s;
     }
 
-    /* Formulario */
-    .form-container {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
+    .card:hover {
+        transform: scale(1.02);
     }
 
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    /* Alineación de campos */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    table tr {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-
-    table th {
-        text-align: left;
-        font-weight: bold;
-        color: white;
-        width: 30%;
-    }
-
-    table td {
-        width: 70%;
-    }
-
+    /* Campos de formulario */
     input, select, textarea {
         width: 100%;
         padding: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.5);
+        border: 1px solid #ced4da;
         border-radius: 5px;
-        background: transparent;
-        color: white;
-        font-size: 1em;
+        background-color: white;
+        transition: all 0.3s ease-in-out;
     }
 
     input:focus, select:focus, textarea:focus {
-        border-color: white;
+        border-color: #28a745;
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
         outline: none;
     }
 
     /* Botones */
-    .button-group {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-    }
-
     .btn {
-        padding: 10px 15px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-        text-decoration: none;
-        text-align: center;
-        font-size: 1em;
+        font-size: 1.1em;
+        transition: all 0.3s ease-in-out;
     }
 
-    .btn-primary {
-        background: #28a745;
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: #218838;
-    }
-
-    .btn-secondary {
-        background: #dc3545;
-        color: white;
+    .btn-success:hover {
+        background-color: #218838;
+        transform: translateY(-2px);
     }
 
     .btn-secondary:hover {
-        background: #c82333;
+        background-color: #5a6268;
+        transform: translateY(-2px);
     }
 </style>
+
 {% endblock %}

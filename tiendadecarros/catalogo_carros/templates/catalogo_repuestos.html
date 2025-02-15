@@ -1,16 +1,65 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Catálogo de Repuestos</h1>
-<div class="productos">
-    {% for repuesto in repuestos %}
-    <div class="producto">
-        <img src="{{ repuesto.imagen.url }}" alt="{{ repuesto.nombre }}">
-        <h2>{{ repuesto.nombre }}</h2>
-        <p>{{ repuesto.descripcion }}</p>
-        <p>Precio: ${{ repuesto.precio }}</p>
-        <a href="{% url 'añadir_producto' repuesto.id %}" class="btn btn-success">Añadir al carrito</a>
+<h1 class="text-center my-4">🛠️ Catálogo de Repuestos</h1>
+
+<div class="container">
+    <div class="row justify-content-center">
+        {% for repuesto in repuestos %}
+        <div class="col-md-4 mb-3"> 
+            <div class="card h-100 shadow-lg text-center">
+                <div class="image-container">
+                    <img src="{{ repuesto.imagen.url }}" alt="{{ repuesto.nombre }}" class="repuesto-img">
+                </div>
+                <div class="card-body p-2 d-flex flex-column align-items-center"> 
+                    <h5 class="card-title mt-2 mb-1 text-center">{{ repuesto.nombre }}</h5> 
+                    <p class="card-text text-center mb-1">{{ repuesto.descripcion }}</p> 
+                    <p class="fw-bold text-success mb-2 text-center">💲{{ repuesto.precio }}</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'añadir_producto' repuesto.id %}" class="btn btn-success w-50 py-1">🛒 Añadir</a>
+                        <a href="{% url 'eliminar_repuesto' repuesto.id %}" class="btn btn-danger w-50 py-1" onclick="return confirm('¿Estás seguro de eliminar este repuesto?');">🗑️ Eliminar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
+
+<style>
+    .image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+        overflow: hidden;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+    }
+
+    .repuesto-img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+
+    .card-body {
+        text-align: center; /* Centrar todo el contenido */
+    }
+
+    .card {
+        border-radius: 8px;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+        transform: scale(1.03);
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 8px 0;
+    }
+</style>
+
 {% endblock %}

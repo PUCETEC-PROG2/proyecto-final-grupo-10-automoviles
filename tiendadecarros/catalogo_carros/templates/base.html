@@ -20,6 +20,24 @@
             background: rgba(0, 0, 0, 0.8);
             text-align: center;
             padding: 30px 0;
+            position: relative;
+        }
+
+        /* Logo en la esquina superior izquierda */
+        .logo {
+            position: absolute;
+            left: 20px;
+            top: 30px;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ff6347; /* Color rojo tomate */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            animation: logoAnimation 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoAnimation {
+            0% { color: #ff6347; }
+            100% { color: #32cd32; } /* Color verde lima */
         }
 
         .header h1 {
@@ -98,6 +116,7 @@
 </head>
 <body>
     <div class="header">
+        <div class="logo">CarStore</div> <!-- Logo agregado -->
         <h1>Tienda de Carros</h1>
         <!-- Enlaces de navegación -->
         <div class="nav-links">
@@ -112,7 +131,8 @@
             <a href="{% url 'nuevo_producto' %}">Añadir Producto</a>
             <a href="{% url 'clientes' %}">Clientes</a>
             <a href="{% url 'ver_compras' %}">Compras</a>
-            <a href="{% url 'historial_compras' %}">Ver Historial de Compras</a>
+            <a href="{% url 'historial_compras' %}">Historial de Compras</a>
+            <a href="{% url 'acerca_de' %}">Acerca de</a>
         </div>
     </div>
 

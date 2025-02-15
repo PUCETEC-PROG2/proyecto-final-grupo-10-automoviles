@@ -1,20 +1,51 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Historial de Compras</h1>
+<h1 class="text-center my-4">📜 Historial de Compras</h1>
+
 {% if compras_finalizadas %}
-    <ul>
-    {% for compra in compras_finalizadas %}
-        <li>
-            <strong>Compra #{{ compra.id }}</strong> - 
-            Cliente: {{ compra.cliente.nombre }} - 
-            Fecha: {{ compra.fecha_finalizacion }} - 
-            Total: ${{ compra.total }}
-            <a href="{% url 'detalle_compra' compra.id %}" class="btn btn-info btn-sm">Ver Detalles</a>
-        </li>
-    {% endfor %}
-    </ul>
+<div class="table-responsive">
+    <table class="table table-bordered text-center align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th># Compra</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for compra in compras_finalizadas %}
+            <tr>
+                <td><strong>#{{ compra.id }}</strong></td>
+                <td>{{ compra.cliente.nombre }}</td>
+                <td>{{ compra.fecha_finalizacion }}</td>
+                <td><strong>${{ compra.total }}</strong></td>
+                <td>
+                    <a href="{% url 'detalle_compra' compra.id %}" class="btn btn-info btn-sm">📄 Ver Detalles</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
-    <p>No hay compras finalizadas en tu historial.</p>
+<p class="text-center text-muted mt-4">No hay compras finalizadas en tu historial.</p>
 {% endif %}
+
+<style>
+    table {
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 2px solid #333 !important;
+        padding: 10px;
+    }
+    th {
+        background-color: #343a40;
+        color: white;
+    }
+</style>
+
 {% endblock %}

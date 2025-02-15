@@ -3,20 +3,22 @@
 {% block content %}
 <div class="container mt-4">
     <h1 class="text-center mb-4">Productos Destacados</h1>
-    <div class="row">
+    
+    
+    <div class="d-flex flex-row flex-nowrap overflow-auto" style="overflow-x: auto; white-space: nowrap;">
         {% for producto in productos_destacados %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}" style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                    <h5 class="card-title">{{ producto.nombre }}</h5>
-                    <p class="card-text">{{ producto.descripcion|truncatechars:100 }}</p>
-                    <p class="fw-bold">Precio: ${{ producto.precio }}</p>
-                </div>
+        <div class="card mx-5 shadow-sm" style="min-width: 300px; max-width: 300px; display: inline-block; float: none;">  <!-- Aumenté el margen a mx-3 -->
+            <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+                <h5 class="card-title">{{ producto.nombre }}</h5>
+                <p class="card-text">{{ producto.descripcion|truncatechars:100 }}</p>
+                <p class="fw-bold">Precio: ${{ producto.precio }}</p>
+                <a href="{% url 'editar_producto' producto.id %}" class="btn btn-warning btn-sm">Editar</a>
+                <a href="{% url 'eliminar_producto' producto.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este producto?');">Eliminar</a>
             </div>
         </div>
         {% empty %}
-        <div class="col-12 text-center">
+        <div class="text-center w-100">
             <p>No hay productos destacados disponibles.</p>
         </div>
         {% endfor %}

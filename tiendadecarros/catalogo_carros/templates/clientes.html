@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1 class="text-center">Lista de Clientes</h1>
+<h1 class="text-center my-4">Lista de Clientes</h1>
 
 <div class="table-responsive">
-    <table class="table table-striped table-bordered text-center">
+    <table class="table table-bordered text-center align-middle">
         <thead class="table-dark">
             <tr>
                 <th>#</th>
                 <th>Nombre</th>
                 <th>Dirección</th>
                 <th>Teléfono</th>
-                <th class="text-center">Acciones</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -19,24 +19,16 @@
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.direccion }}</td>
+                <td>{{ cliente.telefono }}</td>
                 <td>
-                    <table class="table table-borderless m-0">
-                        <tr><td><strong>Calle:</strong> {{ cliente.direccion }}</td></tr>
-                    </table>
-                </td>
-                <td>
-                    <table class="table table-borderless m-0">
-                        <tr><td><strong>Número:</strong> {{ cliente.telefono }}</td></tr>
-                    </table>
-                </td>
-                <td class="text-center">
-                    <a href="{% url 'editar_cliente' cliente.id %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'eliminar_cliente' cliente.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este cliente?');">Eliminar</a>
+                    <a href="{% url 'editar_cliente' cliente.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
+                    <a href="{% url 'eliminar_cliente' cliente.id %}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este cliente?');">🗑 Eliminar</a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" class="text-center">No hay clientes registrados</td>
+                <td colspan="5" class="text-center text-muted">No hay clientes registrados</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -44,6 +36,21 @@
 </div>
 
 <div class="text-center mt-3">
-    <a href="{% url 'nuevo_cliente' %}" class="btn btn-primary">Agregar Cliente</a>
+    <a href="{% url 'nuevo_cliente' %}" class="btn btn-primary">➕ Agregar Cliente</a>
 </div>
+
+<style>
+    table {
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 2px solid #333 !important;
+        padding: 10px;
+    }
+    th {
+        background-color: #343a40;
+        color: white;
+    }
+</style>
+
 {% endblock %}

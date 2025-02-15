@@ -54,3 +54,4 @@ class DetalleCompraForm(forms.ModelForm):
         if precio_unitario <= 0:
             raise forms.ValidationError("El precio unitario debe ser mayor a 0.")
         return precio_unitario
+
